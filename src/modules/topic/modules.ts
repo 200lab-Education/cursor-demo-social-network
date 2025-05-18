@@ -1,18 +1,33 @@
 import { TopicInmemoryRepository } from "./infras/repository";
-import { TopicService } from "./service";
+import { CreateTopicCommandHandler, ListTopicsQueryHandler, UpdateTopicCommandHandler } from "./service";
 import { TopicHTTPController } from "./infras/controller";
 import { Router } from "express";
 import { TopicSequelizeRepository } from "./infras/repository/sequelize-repo";
 import { initSequelizeModel } from "./infras/repository";
-import { sequelize } from "@share/component";
 import { Sequelize } from "sequelize";
+import { DeleteTopicCommandHandler } from "./service/delete-topic.cmd";
+import { GetTopicByIdQueryHandler } from "./service/get-topic-by-id.query";
 
 export function createTopicModule(seq: Sequelize): Router {
-  initSequelizeModel(sequelize);
+  initSequelizeModel(seq);
 
   // const repository = new TopicInmemoryRepository();
   const repository = new TopicSequelizeRepository();
-  const service = new TopicService(repository);
-  const controller = new TopicHTTPController(service);
+
+  const getTopicByIdQueryHandler = new GetTopicByIdQueryHandler(repository);
+  const listTopicsQueryHandler = new ListTopicsQueryHandler(repository);
+  const createTopicCommandHandler = new CreateTopicCommandHandler(repository, repository);
+  const updateTopicCommandHandler = new UpdateTopicCommandHandler(repository, repository);
+  const deleteTopicCommandHandler = new DeleteTopicCommandHandler(repository, repository);
+
+
+  const controller = new TopicHTTPController(
+    createTopicCommandHandler,
+    getTopicByIdQueryHandler,
+    listTopicsQueryHandler,
+    updateTopicCommandHandler,
+    deleteTopicCommandHandler,
+  );
+
   return controller.getRoutes();
 }

@@ -9,6 +9,11 @@ import { PagingResponseDTO } from "@share/dtos";
 import { ERR_TOPIC_NOT_FOUND } from "@modules/topic/model/error";
 
 export class TopicInmemoryRepository implements ITopicRepository {
+  async getByName(name: string): Promise<Topic | null> {
+    const topic = this.topics.find((topic) => topic.name === name);
+    return topic || null;
+  }
+
   private topics: Topic[] = [];
 
   async insert(dto: Topic): Promise<boolean> {

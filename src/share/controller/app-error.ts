@@ -40,6 +40,11 @@ export class AppError extends Error {
     return this;
   }
 
+  withMessage(msg:string): AppError {
+    this.message = msg;
+    return this;
+  }
+
   withLog(logMessage: string): AppError {
     this.logMessage = logMessage;
     return this;

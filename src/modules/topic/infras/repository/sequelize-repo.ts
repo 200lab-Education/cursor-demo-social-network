@@ -33,8 +33,12 @@ export class TopicSequelizeRepository implements ITopicRepository {
     return true;
   }
 
-  async findByName(name: string): Promise<Topic | null> {
-    const topic = await TopicPersistent.findOne({ where: { name } });
+  async getByName(name: string): Promise<Topic | null> {
+    return await this._getByCondition({ name });
+  }
+
+  private async _getByCondition(cond: any): Promise<Topic | null> {
+    const topic = await TopicPersistent.findOne({ where: cond });
     return topic ? this._toModel(topic) : null;
   }
 
